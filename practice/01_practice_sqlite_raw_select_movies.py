@@ -23,4 +23,24 @@ the data you need. We won't be focusing on using SQL code in this class, but
 it is good to know that you can use it.
 '''
 
+from peewee import *
 
+db = SqliteDatabase("movies.db")
+
+class Movie(Model):
+    id = IntegerField()
+    title = CharField()
+    rating = FloatField()
+    year = IntegerField()
+
+    class Meta:
+        database = db
+
+db.connect()
+cursor = db.execute_sql("SELECT title FROM Movie WHERE rating > 8.5;")
+
+for row in cursor.fetchall():
+    print(row)
+
+# for movie in Movie.select().where(Movie.rating > 8.5):
+#     print(Movie.title)
