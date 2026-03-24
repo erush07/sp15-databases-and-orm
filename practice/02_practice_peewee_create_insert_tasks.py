@@ -22,5 +22,23 @@ Using Peewee, create tasks.db. Define a Task model with:
     
 Insert three tasks and print all rows.
 '''
+from peewee import *
 
+db = SqliteDatabase("tasks.db")
+class Task(Model):
+    id = AutoField()
+    description = TextField()
+    priority = IntegerField()
+    done = BooleanField(default = False)
 
+    class Meta:
+        database = db
+db.connect()
+db.create_tables([Task])
+
+task_1 = Task.create(description = "Fold all of the laundry and put it away", priority = 2)
+task_2 = Task.create(description = "Wash and put away dishes", priority = 1)
+task_3 = Task.create(description = "Do IS homework", priority = 3)
+
+for task in Task.select():
+    print(task.__data__)
