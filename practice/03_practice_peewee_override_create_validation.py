@@ -48,5 +48,29 @@ Create a simple task manager using Peewee and SQLite.
    description, and priority for each one
 '''
 
-# from peewee import *
-# Assume tasks.db and Task tables exist from previous exercise.
+from peewee import *
+#Assume tasks.db and Task tables exist from previous exercise.
+
+db = SqliteDatabase("tasks.db")
+
+class Task(Model):
+    id = AutoField()
+    description = TextField()
+    priority = IntegerField()
+    done = BooleanField(default = False)
+
+    class Meta:
+        database = db
+    
+    @classmethod
+    def create(cls, **query):
+        if not 1<= query.get('priority', 0) <=5:
+            print("Priority must be between 1 and 5")
+            return None
+        return super().create(**query)
+
+db.connect()
+db.create_tables([Task])
+
+task_1 = Task.create(description="Fold laundry", priority=9)
+task_2 = Task.create(description="Put away laundry", priority=3)
