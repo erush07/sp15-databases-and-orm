@@ -20,6 +20,8 @@ Artist and Album.
 1. Import the following from peewee:
    SqliteDatabase, Model, AutoField, TextField, ForeignKeyField
 
+from peewee import SqliteDatabase, Model, AutoField, TextField, ForeignKeyField
+
 2. Create a database using:
    db = SqliteDatabase('music.db')
 
@@ -58,5 +60,37 @@ Artist and Album.
 12. Loop through all Album records where artist is the Beatles and
     print each album title
 '''
+from peewee import SqliteDatabase, Model, AutoField, TextField, ForeignKeyField
 
+db = SqliteDatabase('music.db')
+class Artist(Model):
+   artist_id = AutoField()
+   artist_name = TextField()
+   class Meta:
+       database = db
 
+class Album(Model):
+   album_id = AutoField()
+   album_title = TextField()
+   artist = ForeignKeyField(Artist, backref='albums')
+   class Meta:
+       database = db
+
+db.connect()
+db.create_tables([Artist, Album])
+
+beatles = Artist.create(artist_name = "Beatles")
+queen = Artist.create(artist_name = "Queen")
+
+# 2 Beatles albums
+Album.create(album_title = "Yellow Submarine", artist = beatles)
+Album.create(album_title = "Abbey Road", artist = beatles)
+
+# 2 Queen albums
+Album.create(album_title = "News of the World", artist = queen)
+Album.create(album_title = "Jazz", artist = queen)
+
+print("Albums by the Beatles:")
+
+for album in Album.select().where(Album.artist == beatles):
+    print(album.album_title)
